@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body style="margin: 0;">
+    <div style="height: 100vh; width: 100vw; background-color: #3a3a8d; display: flex; justify-content: center;">
+        <canvas id="screen" height="800" width="800" style="border:5px solid #3a3a8d; background-color: rgb(169, 188, 205); border-radius: 1%;"></canvas>
+    </div>
+    <script>
+        let socket = io()
+        socket.on('open', () => {
+        })
+        socket.on('setup', (game) => {
+            var player1
+            game.players.forEach(player => {
+                if (player.id === socket.id) {
+                    player1 = player
+                }
+            })
+            game.fruits.forEach(fruit => {
+                if (
+                    Math.sqrt((player1.x - fruit.x) * (player1.x - fruit.x) + (player1.y - fruit.y) * (player1.y - fruit.y)) < (player1.p * 10) + 3
+                ){
+                    socket.emit('fruit-collision', targets = {
+                        player: player1,
+                        fruit
+                    })
+                }
+            })
+            var canvas = document.getElementById("screen")
+            var ctx = canvas.getContext('2d')
+            ctx.reset()
+            game.players.forEach(player => {
+                if (player.id !== player1.id) {
+                    if (
+                        Math.sqrt((player1.x - player.x) * (player1.x - player.x) + (player1.y - player.y) * (player1.y - player.y)) < ((player1.p * 10) + (player.p * 10)) / 2
+                    ){
+                        socket.emit('players-collision', players = {
+                            player1,
+                            player2: player
+                        })
+                    }
+                }
+                ctx.beginPath()
+                ctx.arc(player.x, player.y, (10*player.p), 0, Math.PI * 2, false)
+                ctx.fill()
+                ctx.stroke()
+            })
+            game.fruits.forEach(fruit => {
+                ctx.beginPath()
+                ctx.arc(fruit.x, fruit.y, 3, 0, Math.PI * 2, false)
+                ctx.fill()
+                ctx.fillStyle ="red"
+                ctx.strokeStyle = "red"
+                ctx.stroke()
+            })
+        })
+        addEventListener('keypress', (event) => {
+            switch (event.keyCode) {
+                case 119: socket.emit('move', move = {
+                    xy: 'y',
+                    value: 5
+                })
+                break
+                case 115: socket.emit('move', move = {
+                    xy: 'y',
+                    value: -5
+                })
+                break
+                case 97: socket.emit('move', move = {
+                    xy: 'x',
+                    value: 5
+                })
+                break
+                case 100: socket.emit('move', move = {
+                    xy: 'x',
+                    value: -5
+                })
+                break
+            }
+        })
+    </script>
+</body>
+</html>

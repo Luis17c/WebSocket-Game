@@ -1,0 +1,20 @@
+{
+  "name": "websocket-game",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "ts-node-dev --respawn server.ts"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/socket.io": "^3.0.2",
+    "@types/ws": "^8.5.4",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "ws": "^8.13.0"
+  }
+}
